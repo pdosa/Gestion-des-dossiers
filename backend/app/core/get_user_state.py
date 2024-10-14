@@ -7,7 +7,7 @@ from backend.app.models.role_model import Role
 from sqlalchemy.orm import Session
 from backend.app.models.user_model import User
 
-def find_current_user(session:Session,matricule)-> User | None:
+def find_current_user(session:Session,matricule:int)-> User | None:
     user=(
         session.query(User).filter(
             matricule==User.matricule
@@ -15,7 +15,7 @@ def find_current_user(session:Session,matricule)-> User | None:
     )
     return user
 
-def authenticate_user(session:Session,plain_password:str,matricule:str)->User|None:
+def authenticate_user(session:Session,plain_password:str,matricule:int)->User|None:
     user=find_current_user(session,matricule)
     if not user:
         return None

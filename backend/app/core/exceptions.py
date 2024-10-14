@@ -6,6 +6,7 @@ credentials_exception=HTTPException(
     headers={"WWW-Authenticate": "Bearer"},
 )
 
+
 permission_exception=HTTPException(
     status_code=401,
     detail="this user don't have a permission"

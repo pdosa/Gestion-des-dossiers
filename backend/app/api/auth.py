@@ -31,7 +31,7 @@ async def login_for_access_token(
     user=authenticate_user(
         session=db,
         plain_password=form_data.password,
-        matricule=form_data.username
+        matricule=int(form_data.username)
     )
     if not user:
         raise incorrect_username_or_password_exceptions
@@ -45,7 +45,7 @@ async def login_for_access_token(
 @auth.post("/create_user",response_model=UserResponse,status_code=201)
 def add_user(user_create: UserModel, session: Session = Depends(bd_connection_v1),token:str=Depends(oauth2_scheme)):
     user = current_user_token(token,session)
-    if user is None:
+    if not user:
         raise no_access_method
     user_validate=get_current_active_admin(user)
     if user_validate is None:
@@ -63,7 +63,7 @@ def add_user(user_create: UserModel, session: Session = Depends(bd_connection_v1
     session.refresh(new_user)
     return {"message":"freddy"}
 
-@auth.post("/create_user_user",response_model=UserResponse,status_code=2021)
+@auth.post("/create_user_user",status_code=201)
 def create_user_simple_user(user:UserModel, session:Session=Depends(bd_connection_v1)):
     hashed_password=get_password_hash(user.password)
     new_user=User(

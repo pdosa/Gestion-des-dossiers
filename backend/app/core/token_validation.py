@@ -41,7 +41,7 @@ def current_user_token(token:Annotated[str,Depends(oauth2_scheme)],db:Session=De
             raise credentials_exception
     except JWTError:
         raise credentials_exception
-    user = find_current_user(db,matricule)
+    user = find_current_user(db,int(matricule))
     if user is None:
         raise credentials_exception
     return user
