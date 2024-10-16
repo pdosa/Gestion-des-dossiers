@@ -1,0 +1,489 @@
+Voici le code complet Svelte de chaque interface de l'application **Qualité Transit SARL** en respectant le design UI/UX mentionné, et en utilisant **Tailwind CSS** avec les codes de couleurs spécifiés.
+
+### 1. **Tableau de Bord Principal (Dashboard.svelte)**
+```svelte
+<script>
+    import { onMount } from "svelte";
+    let dossiers = [];
+    let notifications = [];
+
+    // Simuler l'appel API pour récupérer les données
+    onMount(() => {
+        dossiers = [
+            { id: 1, titre: "Dossier 001", statut: "En cours", responsable: "Agent 1" },
+            { id: 2, titre: "Dossier 002", statut: "Finalisé", responsable: "Agent 2" },
+            { id: 3, titre: "Dossier 003", statut: "Urgent", responsable: "Agent 3" }
+        ];
+        notifications = [
+            { id: 1, message: "Nouveau document ajouté au Dossier 001", lu: false },
+            { id: 2, message: "Dossier 002 a été validé", lu: true }
+        ];
+    });
+</script>
+
+<style>
+    .card:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        transform: translateY(-2px);
+    }
+</style>
+
+<div class="flex min-h-screen bg-F1F1F1">
+    <!-- Menu latéral -->
+    <aside class="w-1/5 bg-001C98 p-6 text-white">
+        <h1 class="text-2xl font-bold mb-6">Qualité Transit SARL</h1>
+        <nav>
+            <ul>
+                <li class="mb-4">
+                    <a href="#" class="flex items-center space-x-2 hover:text-F02532">
+                        <span>Dossiers</span>
+                    </a>
+                </li>
+                <li class="mb-4">
+                    <a href="#" class="flex items-center space-x-2 hover:text-F02532">
+                        <span>Facturation</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="flex items-center space-x-2 hover:text-F02532">
+                        <span>Notifications</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Contenu principal -->
+    <main class="w-4/5 p-8">
+        <div class="mb-6">
+            <h2 class="text-3xl font-bold text-001C98">Tableau de Bord</h2>
+        </div>
+        <div class="grid grid-cols-3 gap-6">
+            <!-- Cartes de dossier -->
+            {#each dossiers as dossier}
+                <div class="card bg-white p-6 rounded-lg shadow-lg cursor-pointer transition-transform">
+                    <h3 class="text-xl font-bold text-001C98 mb-4">{dossier.titre}</h3>
+                    <p class="text-gray-700">Responsable: {dossier.responsable}</p>
+                    <p class="mt-2 text-sm font-medium text-white py-1 px-2 rounded-full {dossier.statut === 'Urgent' ? 'bg-F02532' : dossier.statut === 'Finalisé' ? 'bg-001C98' : 'bg-D9D9D9'}">
+                        {dossier.statut}
+                    </p>
+                </div>
+            {/each}
+        </div>
+        <!-- Notifications -->
+        <div class="mt-8">
+            <h3 class="text-2xl font-bold text-001C98 mb-4">Notifications</h3>
+            <div>
+                {#each notifications as notification}
+                    <div class="bg-{notification.lu ? 'F1F1F1' : 'D9D9D9'} p-4 rounded-lg mb-2">
+                        <p>{notification.message}</p>
+                    </div>
+                {/each}
+            </div>
+        </div>
+    </main>
+</div>
+```
+
+### 2. **Interface de Création de Dossier (DossierCreateForm.svelte)**
+```svelte
+<script>
+    import { createEventDispatcher } from 'svelte';
+    let nom = "";
+    let description = "";
+    let files = [];
+
+    const dispatch = createEventDispatcher();
+
+    function submitDossier() {
+        if (nom && description && files.length > 0) {
+            // Simuler l'envoi des données au backend
+            dispatch('submit', { nom, description, files });
+            alert('Dossier créé avec succès !');
+        } else {
+            alert('Veuillez remplir tous les champs et ajouter des documents.');
+        }
+    }
+
+    function handleFileChange(event) {
+        files = Array.from(event.target.files);
+    }
+</script>
+
+<div class="p-8 bg-white rounded-lg shadow-lg max-w-3xl mx-auto mt-10">
+    <h2 class="text-2xl font-bold text-001C98 mb-6">Créer un Nouveau Dossier</h2>
+    <div class="mb-4">
+        <label class="block text-gray-700 mb-2">Nom du dossier</label>
+        <input type="text" bind:value={nom} class="w-full p-3 border rounded focus:outline-none focus:ring focus:ring-001C98">
+    </div>
+    <div class="mb-4">
+        <label class="block text-gray-700 mb-2">Description</label>
+        <textarea bind:value={description} class="w-full p-3 border rounded focus:outline-none focus:ring focus:ring-001C98"></textarea>
+    </div>
+    <div class="mb-6">
+        <label class="block text-gray-700 mb-2">Ajouter des documents</label>
+        <input type="file" multiple on:change={handleFileChange} class="w-full p-3 border rounded focus:outline-none focus:ring focus:ring-001C98">
+    </div>
+    <button on:click={submitDossier} class="w-full p-3 bg-001C98 text-white rounded hover:bg-F02532 transition-colors">Soumettre le Dossier</button>
+</div>
+```
+
+### 3. **Interface de Gestion des Dossiers (DossierDetail.svelte)**
+```svelte
+<script>
+    import { onMount } from "svelte";
+    let dossier = {};
+    let agents = [];
+    let selectedAgent = "";
+
+    onMount(() => {
+        // Simuler l'appel API pour récupérer les données du dossier et des agents
+        dossier = {
+            id: 1,
+            titre: "Dossier de Transit 001",
+            description: "Description du dossier",
+            documents: [
+                { id: 1, nom: "Contrat.pdf" },
+                { id: 2, nom: "Facture.pdf" }
+            ],
+            statut: "En cours"
+        };
+        agents = ["Agent 1", "Agent 2", "Agent 3"];
+    });
+
+    function assignAgent() {
+        if (selectedAgent) {
+            // Simuler l'envoi de l'assignation au backend
+            alert(`Agent ${selectedAgent} assigné au dossier.`);
+        } else {
+            alert('Veuillez sélectionner un agent.');
+        }
+    }
+</script>
+
+<div class="p-8 bg-white rounded-lg shadow-lg max-w-3xl mx-auto mt-10">
+    <h2 class="text-2xl font-bold text-001C98 mb-4">{dossier.titre}</h2>
+    <p class="text-gray-700 mb-6">{dossier.description}</p>
+    <h3 class="text-xl font-bold text-001C98 mb-4">Documents</h3>
+    <ul class="mb-6">
+        {#each dossier.documents as document}
+            <li class="mb-2 flex items-center justify-between">
+                <span>{document.nom}</span>
+                <button class="bg-001C98 text-white px-4 py-2 rounded hover:bg-F02532 transition-colors">Télécharger</button>
+            </li>
+        {/each}
+    </ul>
+    <div class="mb-6">
+        <label class="block text-gray-700 mb-2">Assigner un agent</label>
+        <select bind:value={selectedAgent} class="w-full p-3 border rounded focus:outline-none focus:ring focus:ring-001C98">
+            <option value="" disabled selected>Choisir un agent</option>
+            {#each agents as agent}
+                <option>{agent}</option>
+            {/each}
+        </select>
+    </div>
+    <button on:click={assignAgent} class="w-full p-3 bg-001C98 text-white rounded hover:bg-F02532 transition-colors">Assigner l'Agent</button>
+</div>
+```
+
+### 4. **Interface de Suivi des Dossiers (DossierTracking.svelte)**
+```svelte
+<script>
+    import { onMount } from "svelte";
+    let dossiers = [];
+
+    onMount(() => {
+        // Simuler l'appel API pour récupérer les dossiers assignés
+        dossiers = [
+            { id: 1, titre: "Dossier de Transit 001", statut: "En cours", progress: 50 },
+            { id: 2, titre: "Dossier de Transit 002", statut: "En attente de documents", progress: 30 }
+        ];
+    });
+</script>
+
+<div class="p
+
+-8 bg-white rounded-lg shadow-lg max-w-3xl mx-auto mt-10">
+    <h2 class="text-2xl font-bold text-001C98 mb-6">Suivi des Dossiers</h2>
+    <ul>
+        {#each dossiers as dossier}
+            <li class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="text-xl font-bold">{dossier.titre}</h3>
+                    <p class="text-sm text-001C98">{dossier.statut}</p>
+                </div>
+                <div class="relative w-full bg-D9D9D9 h-4 rounded">
+                    <div class="absolute top-0 left-0 bg-001C98 h-4 rounded" style="width: {dossier.progress}%"></div>
+                </div>
+                <div class="mt-4 flex justify-end">
+                    <button class="bg-001C98 text-white px-4 py-2 rounded hover:bg-F02532 transition-colors">Ajouter Document</button>
+                </div>
+            </li>
+        {/each}
+    </ul>
+</div>
+```
+
+### 5. **Interface de Facturation (InvoiceGenerator.svelte)**
+```svelte
+<script>
+    let montant = 0;
+    let dossier = { titre: "Dossier de Transit 001", description: "Description du dossier", montantBase: 500 };
+
+    function genererFacture() {
+        if (montant > 0) {
+            // Simuler l'envoi des données de la facture au backend
+            alert(`Facture de ${montant} générée pour le ${dossier.titre}.`);
+        } else {
+            alert("Veuillez entrer un montant valide.");
+        }
+    }
+</script>
+
+<div class="p-8 bg-white rounded-lg shadow-lg max-w-3xl mx-auto mt-10">
+    <h2 class="text-2xl font-bold text-001C98 mb-6">Générer une Facture</h2>
+    <div class="mb-4">
+        <label class="block text-gray-700 mb-2">Dossier</label>
+        <input type="text" value={dossier.titre} disabled class="w-full p-3 border rounded bg-F1F1F1">
+    </div>
+    <div class="mb-4">
+        <label class="block text-gray-700 mb-2">Description</label>
+        <textarea disabled class="w-full p-3 border rounded bg-F1F1F1">{dossier.description}</textarea>
+    </div>
+    <div class="mb-6">
+        <label class="block text-gray-700 mb-2">Montant</label>
+        <input type="number" bind:value={montant} class="w-full p-3 border rounded focus:outline-none focus:ring focus:ring-001C98">
+    </div>
+    <button on:click={genererFacture} class="w-full p-3 bg-001C98 text-white rounded hover:bg-F02532 transition-colors">Générer la Facture</button>
+</div>
+```
+
+### 6. **Interface de Notifications (NotificationPopup.svelte)**
+```svelte
+<script>
+    import { onMount } from "svelte";
+    let notifications = [];
+
+    onMount(() => {
+        // Simuler l'appel API pour récupérer les notifications
+        notifications = [
+            { id: 1, message: "Document ajouté au Dossier 001", lu: false },
+            { id: 2, message: "Dossier 002 validé", lu: true }
+        ];
+    });
+
+    function markAsRead(id) {
+        notifications = notifications.map(notif => notif.id === id ? { ...notif, lu: true } : notif);
+    }
+</script>
+
+<div class="fixed bottom-4 right-4 max-w-xs w-full">
+    {#each notifications as notification}
+        <div class="mb-2 bg-{notification.lu ? 'F1F1F1' : 'D9D9D9'} p-4 rounded-lg shadow-lg">
+            <p>{notification.message}</p>
+            <button on:click={() => markAsRead(notification.id)} class="mt-2 text-001C98 hover:text-F02532">Marquer comme lu</button>
+        </div>
+    {/each}
+</div>
+```
+Pour faire fonctionner l'application **Qualité Transit SARL** avec Svelte et le code que je t'ai fourni, voici une procédure détaillée à suivre pour installer et configurer ton environnement. Les étapes incluent l'installation des outils nécessaires, la configuration de **Tailwind CSS** avec **Svelte**, et l'exécution de ton application. 
+
+### Prérequis
+Avant de commencer, assure-toi d'avoir les éléments suivants installés sur ton système :
+1. **Node.js** et **npm** : Svelte utilise `npm` pour la gestion des packages. Tu peux télécharger Node.js (qui inclut `npm`) depuis [nodejs.org](https://nodejs.org).
+   - Vérifie l'installation avec : 
+     ```bash
+     node -v
+     npm -v
+     ```
+
+2. **VSCode ou tout autre éditeur de code** : Il est recommandé d’utiliser un éditeur comme **Visual Studio Code** pour écrire et gérer ton code Svelte.
+
+---
+
+### 1. Créer et configurer un nouveau projet Svelte
+
+#### Étape 1 : Initialiser un projet Svelte
+Dans ton terminal, utilise la commande suivante pour créer un nouveau projet Svelte. Svelte propose un modèle de démarrage simple.
+
+```bash
+npx degit sveltejs/template qualite-transit-sarl
+```
+
+Cela créera un dossier nommé `qualite-transit-sarl` avec la structure de base d'un projet Svelte.
+
+#### Étape 2 : Installer les dépendances
+Va dans le répertoire du projet nouvellement créé et installe les dépendances.
+
+```bash
+cd qualite-transit-sarl
+npm install
+```
+
+---
+
+### 2. Configurer **Tailwind CSS** dans Svelte
+
+Nous allons maintenant configurer **Tailwind CSS** pour gérer les styles.
+
+#### Étape 1 : Installer Tailwind CSS et ses dépendances
+Exécute les commandes suivantes pour installer **Tailwind CSS**, **PostCSS**, et **Autoprefixer** dans ton projet :
+
+```bash
+npm install -D tailwindcss@latest postcss@latest autoprefixer@latest
+```
+
+#### Étape 2 : Initialiser Tailwind CSS
+Après l'installation de **Tailwind**, génère les fichiers de configuration **tailwind.config.js** et **postcss.config.js** avec la commande suivante :
+
+```bash
+npx tailwindcss init
+```
+
+#### Étape 3 : Configurer PostCSS
+Crée le fichier `postcss.config.js` (si ce n'est pas déjà fait) avec le contenu suivant :
+
+```js
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+```
+
+#### Étape 4 : Configurer Tailwind
+Dans le fichier **tailwind.config.js**, spécifie où Tailwind doit chercher les fichiers pour générer les classes CSS :
+
+```js
+module.exports = {
+  content: ['./public/**/*.html', './src/**/*.{svelte,js}'],
+  theme: {
+    extend: {
+      colors: {
+        'custom-gray': '#B3B3B3',
+        'custom-white': '#FFFFFF',
+        'custom-black': '#000000',
+        'custom-blue': '#001C98',
+        'custom-light-gray': '#D9D9D9',
+        'custom-red': '#F02532',
+        'custom-very-light-gray': '#F1F1F1'
+      }
+    },
+  },
+  plugins: [],
+}
+```
+
+Cette configuration indique à Tailwind d'appliquer ses styles dans les fichiers **Svelte** et **JS** du projet.
+
+#### Étape 5 : Ajouter Tailwind dans le fichier CSS
+Crée ou édite le fichier `src/app.css` pour inclure Tailwind CSS avec les directives suivantes :
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+Cela va activer toutes les classes **Tailwind CSS** dans ton projet.
+
+---
+
+### 3. Intégrer le code dans Svelte
+
+#### Étape 1 : Organiser les composants
+Crée un dossier `src/components/` pour y placer tous les fichiers Svelte fournis dans les étapes précédentes. Par exemple, tu peux ajouter les fichiers suivants :
+- `Dashboard.svelte`
+- `DossierCreateForm.svelte`
+- `DossierDetail.svelte`
+- `DossierTracking.svelte`
+- `InvoiceGenerator.svelte`
+- `NotificationPopup.svelte`
+
+#### Étape 2 : Modifier le fichier `src/App.svelte`
+Le fichier principal `App.svelte` est le point d'entrée de ton application. Pour intégrer les interfaces que j'ai fournies, modifie-le comme suit :
+
+```svelte
+<script>
+    import Dashboard from './components/Dashboard.svelte';
+    import DossierCreateForm from './components/DossierCreateForm.svelte';
+    import DossierDetail from './components/DossierDetail.svelte';
+    import DossierTracking from './components/DossierTracking.svelte';
+    import InvoiceGenerator from './components/InvoiceGenerator.svelte';
+    import NotificationPopup from './components/NotificationPopup.svelte';
+
+    let page = 'dashboard'; // Pour changer de page (par exemple : 'create', 'detail', etc.)
+</script>
+
+<div class="min-h-screen bg-custom-very-light-gray">
+    <nav class="bg-custom-blue p-4 text-white">
+        <ul class="flex space-x-4">
+            <li><a href="#" on:click={() => page = 'dashboard'}>Dashboard</a></li>
+            <li><a href="#" on:click={() => page = 'create'}>Créer Dossier</a></li>
+            <li><a href="#" on:click={() => page = 'detail'}>Détails Dossier</a></li>
+            <li><a href="#" on:click={() => page = 'tracking'}>Suivi Dossier</a></li>
+            <li><a href="#" on:click={() => page = 'facture'}>Facturation</a></li>
+        </ul>
+    </nav>
+
+    <main class="p-8">
+        {#if page === 'dashboard'}
+            <Dashboard />
+        {/if}
+        {#if page === 'create'}
+            <DossierCreateForm />
+        {/if}
+        {#if page === 'detail'}
+            <DossierDetail />
+        {/if}
+        {#if page === 'tracking'}
+            <DossierTracking />
+        {/if}
+        {#if page === 'facture'}
+            <InvoiceGenerator />
+        {/if}
+    </main>
+
+    <NotificationPopup />
+</div>
+```
+
+Dans ce fichier, tu as un **menu de navigation** en haut de la page qui te permet de changer de page via la variable `page`. Selon la valeur de cette variable, le composant correspondant est affiché.
+
+---
+
+### 4. Lancer l'application
+
+Après avoir configuré ton projet Svelte et ajouté le code nécessaire, il est temps de lancer ton application pour vérifier son bon fonctionnement.
+
+#### Étape 1 : Démarrer le serveur de développement
+Utilise la commande suivante pour démarrer le serveur de développement Svelte :
+
+```bash
+npm run dev
+```
+
+Cela va lancer ton application et elle sera accessible à l’adresse suivante : [http://localhost:5000](http://localhost:5000).
+
+#### Étape 2 : Vérifier l'application
+Ouvre ton navigateur et accède à [http://localhost:5000](http://localhost:5000) pour voir l'application en action. Tu devrais pouvoir naviguer entre les différentes pages, voir les notifications, et interagir avec les interfaces.
+
+---
+
+### 5. Ajouter les fonctionnalités backend (Optionnel)
+
+Bien que cette procédure se concentre sur l'interface frontend, tu pourrais vouloir connecter ton **backend FastAPI** pour gérer la logique de serveur, les API et la base de données PostgreSQL.
+
+Voici un aperçu des prochaines étapes si tu veux aller plus loin :
+- **Développer les API dans FastAPI** pour gérer les dossiers, documents, notifications, etc.
+- **Appeler les API** dans les composants Svelte à l’aide de `fetch` ou `axios` pour interagir avec le backend (ex: récupération de données de dossiers, téléversement de documents).
+- **Configurer PostgreSQL** comme base de données pour stocker les informations.
+
+---
+
+### Conclusion
+
+Cette procédure te permet de démarrer avec **Svelte** et **Tailwind CSS** pour développer ton application **Qualité Transit SARL**. Les étapes couvrent l'installation, la configuration, l'organisation du code, et le lancement de l'application. Avec cela, tu devrais être en mesure de voir les interfaces que tu as créées et de les faire fonctionner correctement. Une fois à l'aise avec cela, tu pourras connecter un backend et une base de données pour gérer les données en temps réel.
+### Conclusion
+Ce code Svelte, stylisé avec **Tailwind CSS**, respecte les règles de design UI/UX définies pour l'application **Qualité Transit SARL**. Les interfaces sont conçues pour être **magnifiques, interactives, responsives**, et permettent une **expérience utilisateur optimale**.
