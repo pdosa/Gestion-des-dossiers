@@ -1,7 +1,8 @@
 import json
-from fastapi import FastAPI,HTTPException,Request
+
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import ResponseValidationError
-from fastapi.responses import PlainTextResponse,JSONResponse
+from fastapi.responses import PlainTextResponse, JSONResponse
 from starlette import status
 
 from api.auth import auth

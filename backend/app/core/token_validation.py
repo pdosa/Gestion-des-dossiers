@@ -3,16 +3,16 @@ from _pydatetime import timedelta
 from datetime import datetime
 from pathlib import Path
 from typing import Optional, Annotated
-from sqlalchemy.orm import Session
-from jose import jwt,JWTError
-from fastapi import Depends ,HTTPException,status
-from fastapi.security import OAuth2PasswordBearer,OAuth2PasswordRequestForm
-from passlib.context import CryptContext
+
+from core.exceptions import credentials_exception, permission_exception
+from core.get_user_state import find_current_user
+from db.db_connection import bd_connection_v1
 from dotenv import load_dotenv
-from backend.app.core.exceptions import credentials_exception, permission_exception
-from backend.app.core.get_user_state import find_current_user
-from backend.app.db.db_connection import bd_connection_v1
-from backend.app.models.user_model import User
+from fastapi import Depends
+from fastapi.security import OAuth2PasswordBearer
+from jose import jwt, JWTError
+from models.user_model import User
+from sqlalchemy.orm import Session
 
 env_path = Path(__file__).resolve().parents[2] / '.venv' / '.env'
 print(env_path)

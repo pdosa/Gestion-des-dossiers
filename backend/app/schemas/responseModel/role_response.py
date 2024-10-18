@@ -1,5 +1,5 @@
-from pydantic import BaseModel,EmailStr
-from backend.app.models.role_model import RoleName
+from models.role_model import RoleName
+from pydantic import BaseModel, EmailStr
 
 
 class RoleResponse(BaseModel):
