@@ -1,9 +1,19 @@
 from datetime import timedelta
 from typing import Annotated
+<<<<<<< HEAD
+=======
+
+from core.exceptions import incorrect_username_or_password_exceptions, no_access_method, permission_exception
+from core.get_user_state import authenticate_user
+from core.password_validation import get_password_hash
+from core.token_validation import create_access_token, oauth2_scheme, current_user_token, get_current_active_admin
+from db.db_connection import bd_connection_v1
+>>>>>>> 50a9ff8e7b4c3915d252ddd8fccd7d07b2486492
 from fastapi import (
     APIRouter,
     Depends
 )
+<<<<<<< HEAD
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer,OAuth2PasswordRequestForm
 from backend.app.api.service.auth_service import create_user
@@ -15,6 +25,13 @@ from backend.app.db.db_connection import bd_connection_v1
 from backend.app.models.user_model import User
 from backend.app.schemas.responseModel.role_response import UserResponse, Token
 from backend.app.schemas.user_schemas import UserSchema, UserModel
+=======
+from fastapi.security import OAuth2PasswordRequestForm
+from models.user_model import User
+from schemas.responseModel.role_response import UserResponse, Token
+from schemas.user_schemas import UserModel
+from sqlalchemy.orm import Session
+>>>>>>> 50a9ff8e7b4c3915d252ddd8fccd7d07b2486492
 
 # test connection
 

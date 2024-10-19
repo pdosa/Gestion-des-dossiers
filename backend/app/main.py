@@ -1,4 +1,5 @@
 import json
+<<<<<<< HEAD
 from fastapi import FastAPI,HTTPException,Request
 from fastapi.exceptions import ResponseValidationError
 from fastapi.responses import PlainTextResponse,JSONResponse
@@ -10,6 +11,20 @@ app=FastAPI(
     title="Transit-app",
     description="this is an api for a backend of management folder for a transit app",
 
+=======
+
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.exceptions import ResponseValidationError
+from fastapi.responses import PlainTextResponse, JSONResponse
+from starlette import status
+
+from api.auth import auth
+
+app=FastAPI(
+    title="Transit-app",
+    description="this is an api for a backend of management folder for a transit app",
+
+>>>>>>> 50a9ff8e7b4c3915d252ddd8fccd7d07b2486492
 )
 app.include_router(auth)
 

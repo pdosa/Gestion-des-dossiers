@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from typing import Any
 
 from fastapi import HTTPException
@@ -6,6 +7,15 @@ from backend.app.core.password_validation import verify_password
 from backend.app.models.role_model import Role
 from sqlalchemy.orm import Session
 from backend.app.models.user_model import User
+=======
+from fastapi import HTTPException
+
+from fastapi import HTTPException
+from models.role_model import Role
+from models.user_model import User
+from sqlalchemy.orm import Session
+
+>>>>>>> 50a9ff8e7b4c3915d252ddd8fccd7d07b2486492
 
 def find_current_user(session:Session,matricule:int)-> User | None:
     user=(
